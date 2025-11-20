@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		
+		<!--Nuget-->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		
+		<PackageId>Ba.Core.Persistence</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Baransel Aydın</Authors>
+		<Description>Core Persistence library including IRepository pattern, SoftDelete, Paging, DynamicQuery support.</Description>
+		<PackageTags>efcore persistence repository softdelete dynamicquery paginate</PackageTags>
+
+		<PackageProjectUrl></PackageProjectUrl>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Humanizer.Core" Version="3.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.0" />
+	</ItemGroup>
+
+</Project>

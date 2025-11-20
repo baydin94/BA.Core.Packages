@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Core.Application/Core.Application.csproj" />
+  <Project Path="Core.CrossCuttingConcerns/Core.CrossCuttingConcerns.csproj" />
+  <Project Path="Core.Persistence/Core.Persistence.csproj" />
+  <Project Path="Core.Security/Core.Security.csproj" />
+</Solution>
