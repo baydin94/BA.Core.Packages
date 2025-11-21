@@ -4,20 +4,31 @@
 		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		
-		<!--Nuget-->
+
+		<!-- NuGet package metadata -->
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		
+
 		<PackageId>Ba.Core.Persistence</PackageId>
 		<Version>1.0.0</Version>
 		<Authors>Baransel Aydın</Authors>
-		<Description>Core Persistence library including IRepository pattern, SoftDelete, Paging, DynamicQuery support.</Description>
-		<PackageTags>efcore persistence repository softdelete dynamicquery paginate</PackageTags>
+		<Description>
+			Core Persistence library including IRepository pattern, UnitOfWork, SoftDelete, Paging, and DynamicQuery support.
+		</Description>
+		<PackageTags>efcore,persistence,repository,unitofwork,softdelete,dynamicquery,paging,crud,ddd</PackageTags>
 
-		<PackageProjectUrl></PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/baydin94/BA.Core.Packages</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/baydin94/BA.Core.Packages</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="" />
+
 		<PackageReference Include="Humanizer.Core" Version="3.0.1" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="10.0.0" />

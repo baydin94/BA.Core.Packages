@@ -1,6 +1,7 @@
 <Solution>
-  <Project Path="Core.Application/Core.Application.csproj" />
-  <Project Path="Core.CrossCuttingConcerns/Core.CrossCuttingConcerns.csproj" />
-  <Project Path="Core.Persistence/Core.Persistence.csproj" />
-  <Project Path="Core.Security/Core.Security.csproj" />
+  <Project Path="D:/Projects/backend/Core.Packages/Core.Application/Core.Application.csproj" />
+  <Project Path="D:/Projects/backend/Core.Packages/Core.CrossCuttingConcerns/Core.CrossCuttingConcerns.csproj" />
+  <Project Path="D:/Projects/backend/Core.Packages/Core.Persistence.Mongo/Core.Persistence.Mongo.csproj" Id="3183f939-ccf5-48f5-8f8c-11061c91dae8" />
+  <Project Path="D:/Projects/backend/Core.Packages/Core.Persistence/Core.Persistence.csproj" />
+  <Project Path="D:/Projects/backend/Core.Packages/Core.Security/Core.Security.csproj" />
 </Solution>
