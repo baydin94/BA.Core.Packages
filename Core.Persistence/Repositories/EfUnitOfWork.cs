@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Core.Abstractions.Dependencies;
+using Microsoft.EntityFrameworkCore;
 
-namespace Core.Persistence.Repositories;
+namespace Core.Persistence.Sql.Repositories;
 
 public class EfUnitOfWork<TContext> : IUnitOfWork
     where TContext : DbContext

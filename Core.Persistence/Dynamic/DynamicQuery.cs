@@ -1,4 +1,4 @@
-﻿namespace Core.Persistence.Dynamic;
+﻿namespace Core.Persistence.Sql.Dynamic;
 
 public class DynamicQuery
 {

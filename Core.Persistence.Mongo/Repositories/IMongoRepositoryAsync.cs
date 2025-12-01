@@ -44,5 +44,5 @@ public interface IMongoRepositoryAsync<TDocument> : IQuery<TDocument>
     Task<ICollection<TDocument>> UpdateRangeAsync(ICollection<TDocument> documents, CancellationToken cancellationToken = default);
     Task<TDocument> RemoveAsync(TDocument document, bool permanent = false, CancellationToken cancellationToken = default);
     Task<ICollection<TDocument>> RemoveRangeAsync(ICollection<TDocument> documents, bool permanent = false, CancellationToken cancellationToken = default);
-    
+
 }

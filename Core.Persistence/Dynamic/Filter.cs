@@ -1,10 +1,10 @@
-﻿namespace Core.Persistence.Dynamic;
+﻿namespace Core.Persistence.Sql.Dynamic;
 
 public class Filter
 {
-    public required string Field { get; set; }
+    public string? Field { get; set; }
     public string? Value { get; set; }
-    public required string Operator { get; set; }
+    public string? Operator { get; set; }
     public string? Logic { get; set; }
     public IEnumerable<Filter> Filters { get; set; } = new List<Filter>();
 

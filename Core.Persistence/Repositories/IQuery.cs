@@ -1,4 +1,4 @@
-﻿namespace Core.Persistence.Repositories;
+﻿namespace Core.Persistence.Sql.Repositories;
 
 public interface IQuery<TEntity>
 {

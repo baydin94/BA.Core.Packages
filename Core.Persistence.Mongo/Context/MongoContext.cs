@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Humanizer;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 
@@ -16,7 +17,13 @@ public class MongoContext
 
     public IMongoCollection<TDocument> GetCollection<TDocument>()
     {
-        string collection = typeof(TDocument).Name;
+        string collection = typeof(TDocument).Name.Pluralize();
         return _mongoDatabase.GetCollection<TDocument>(collection);
+    }
+
+    // Test - explicit collection name
+    public IMongoCollection<TDocument> GetCollection<TDocument>(string collectionName)
+    {
+        return _mongoDatabase.GetCollection<TDocument>(collectionName);
     }
 }

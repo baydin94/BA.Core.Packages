@@ -1,9 +1,9 @@
-﻿using Core.Persistence.Dynamic;
-using Core.Persistence.Paging;
+﻿using Core.Persistence.Sql.Dynamic;
+using Core.Persistence.Sql.Paging;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace Core.Persistence.Repositories;
+namespace Core.Persistence.Sql.Repositories;
 
 public interface IRepository<TEntity, TEntityId> : IQuery<TEntity>
     where TEntity : BaseEntity<TEntityId>
@@ -27,8 +27,8 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity>
 
     Paginate<TEntity> GetListByDynamic(
         DynamicQuery dynamicQuery,
-        Expression<Func<TEntity,bool>>? predicate = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity,object>>? include = null,
+        Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
         int index = 0,
         int size = 10,
         bool withDeleted = false,

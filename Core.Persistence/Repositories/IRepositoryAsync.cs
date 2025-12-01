@@ -1,9 +1,9 @@
-﻿using Core.Persistence.Dynamic;
-using Core.Persistence.Paging;
+﻿using Core.Persistence.Sql.Dynamic;
+using Core.Persistence.Sql.Paging;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
-namespace Core.Persistence.Repositories;
+namespace Core.Persistence.Sql.Repositories;
 
 public interface IRepositoryAsync<TEntity, TEntityId> : IQuery<TEntity>
     where TEntity : BaseEntity<TEntityId>

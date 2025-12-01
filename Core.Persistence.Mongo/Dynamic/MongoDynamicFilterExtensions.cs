@@ -20,6 +20,7 @@ public static class MongoDynamicFilterExtensions
             { "lte", (field, value, b) => b.Lte(field, BsonValue.Create(value)) },
 
             { "contains", (field, value, b) => b.Regex(field, new BsonRegularExpression(value, "i")) },
+            {"doesnotcontains", (field,value,b) => b.Regex(field, new BsonRegularExpression($"^(?!.*{value}).*$", "i")) },
             { "startswith", (field, value, b) => b.Regex(field, new BsonRegularExpression("^" + value, "i")) },
             { "endswith", (field, value, b) => b.Regex(field, new BsonRegularExpression(value + "$", "i")) },
 
@@ -62,20 +63,23 @@ public static class MongoDynamicFilterExtensions
         Dictionary<string, Func<string, string, FilterDefinitionBuilder<TDocument>, FilterDefinition<TDocument>>> operators =
             BuildOperatorMap<TDocument>();
 
-        if (!operators.ContainsKey(filter.Operator))
-            throw new ArgumentException("Invalid Operator");
-
-        if (!string.IsNullOrWhiteSpace(filter.Value))
+        if (!string.IsNullOrWhiteSpace(filter.Operator))
         {
-            FilterDefinition<TDocument> definition =
-                operators[filter.Operator](filter.Field, filter.Value, builder);
+            if (!operators.ContainsKey(filter.Operator))
+                throw new ArgumentException("Invalid Operator");
 
-            definitions.Add(definition);
+            if (!string.IsNullOrWhiteSpace(filter.Field))
+            {
+                var definition =
+                    operators[filter.Operator](filter.Field, filter.Value ?? "", builder);
+
+                definitions.Add(definition);
+            }
         }
 
         if (filter.Filters != null)
         {
-            foreach (Filter child in filter.Filters)
+            foreach (var child in filter.Filters)
                 ApplyFilterRecursive(child, builder, definitions);
         }
     }

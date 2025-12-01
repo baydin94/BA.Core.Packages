@@ -11,31 +11,28 @@ public class MongoRepositoryBase<TDocument> : IMongoRepositoryAsync<TDocument>, 
     where TDocument : BaseDocument
 
 {
-    protected readonly MongoContext Context;
     protected readonly IMongoCollection<TDocument> _collection;
     public MongoRepositoryBase(MongoContext context)
     {
-        Context = context;
-        _collection = Context.GetCollection<TDocument>();
+        _collection = context.GetCollection<TDocument>();
     }
+
+    //Unit Test
+    public MongoRepositoryBase(MongoContext context, string collectionName)
+    {
+        _collection = context.GetCollection<TDocument>(collectionName);
+    }
+
     public bool Any(Expression<Func<TDocument, bool>>? predicate = null, bool withDeleted = false)
     {
-        IQueryable<TDocument> queryable = Query(withDeleted);
-
-        if (predicate != null)
-            queryable = queryable.Where(predicate);
-
-        return queryable.Any();
+        FilterDefinition<TDocument> filter = BuildFilter(predicate, withDeleted);
+        return _collection.Find(filter).Any();
     }
 
     public async Task<bool> AnyAsync(Expression<Func<TDocument, bool>>? predicate = null, bool withDeleted = false, CancellationToken cancellationToken = default)
     {
-        IQueryable<TDocument> queryable = Query(withDeleted);
-
-        if (predicate != null)
-            queryable = queryable.Where(predicate);
-
-        return await queryable.AnyAsync(cancellationToken);
+        FilterDefinition<TDocument> filter = BuildFilter(predicate, withDeleted);
+        return await _collection.Find(filter).AnyAsync(cancellationToken);
     }
 
     public async Task<TDocument> CreateAsync(TDocument document, CancellationToken cancellationToken = default)
@@ -145,13 +142,10 @@ public class MongoRepositoryBase<TDocument> : IMongoRepositoryAsync<TDocument>, 
         return await fluent.ToPaginateAsync(index, size, cancellationToken);
     }
 
-    public IQueryable<TDocument> Query(bool withDeleted = false)
+    public IFindFluent<TDocument, TDocument> Query(bool withDeleted = false)
     {
-        IQueryable<TDocument> queryable = _collection.AsQueryable();
-
-        if (!withDeleted)
-            queryable = queryable.Where(x => x.DeletedDate == null);
-        return queryable;
+        FilterDefinition<TDocument> filter = withDeleted ? Builders<TDocument>.Filter.Empty : Builders<TDocument>.Filter.Eq(x => x.DeletedDate, null);
+        return _collection.Find(filter);
     }
 
     public async Task<TDocument> RemoveAsync(TDocument document, bool permanent = false, CancellationToken cancellationToken = default)
@@ -178,6 +172,9 @@ public class MongoRepositoryBase<TDocument> : IMongoRepositoryAsync<TDocument>, 
         }
 
         await _collection.UpdateManyAsync(Builders<TDocument>.Filter.In(x => x.Id, ids), Builders<TDocument>.Update.Set(x => x.DeletedDate, DateTime.UtcNow), cancellationToken: cancellationToken);
+
+        foreach (TDocument document in documents)
+            document.DeletedDate = DateTime.UtcNow;
 
         return documents;
     }
@@ -208,7 +205,7 @@ public class MongoRepositoryBase<TDocument> : IMongoRepositoryAsync<TDocument>, 
         return documents;
     }
 
-    protected FilterDefinition<TDocument> BuildFilter(Expression<Func<TDocument, bool>> predicate, bool withDeleted)
+    protected FilterDefinition<TDocument> BuildFilter(Expression<Func<TDocument, bool>>? predicate, bool withDeleted)
     {
         FilterDefinitionBuilder<TDocument> filterBuilder = Builders<TDocument>.Filter;
         FilterDefinition<TDocument> filterDefinition = filterBuilder.Empty;
@@ -216,7 +213,8 @@ public class MongoRepositoryBase<TDocument> : IMongoRepositoryAsync<TDocument>, 
         if (!withDeleted)
             filterDefinition &= filterBuilder.Eq(x => x.DeletedDate, null);
 
-        filterDefinition &= filterBuilder.Where(predicate);
+        if (predicate != null)
+            filterDefinition &= filterBuilder.Where(predicate);
         return filterDefinition;
     }
 }

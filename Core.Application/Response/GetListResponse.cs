@@ -1,4 +1,4 @@
-﻿using Core.Persistence.Paging;
+﻿using Core.Persistence.Mongo.Paging;
 
 namespace Core.Application.Response;
 

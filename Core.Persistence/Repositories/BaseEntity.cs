@@ -1,17 +1,19 @@
 ﻿
-namespace Core.Persistence.Repositories;
+using Core.Abstractions.Domain;
 
-public class BaseEntity<TEntityId> : IEntityTimestamps
+namespace Core.Persistence.Sql.Repositories;
+
+public class BaseEntity<TKey> : IEntity<TKey>, IHasTimestamps
 {
     public DateTime CreatedDate { get; set; }
     public DateTime? UpdatedDate { get; set; }
     public DateTime? DeletedDate { get; set; }
 
-    public TEntityId Id { get; set; } = default!;
+    public TKey Id { get; set; } = default!;
 
     public BaseEntity() { }
 
-    public BaseEntity(TEntityId id)
+    public BaseEntity(TKey id)
     {
         Id = id;
     }

@@ -23,7 +23,7 @@ public static class MongoPaginateExtensions
         return paginate;
     }
 
-    public static Paginate<TDocument> ToPaginate<TDocument>(this IFindFluent<TDocument,TDocument> fluent, int index, int size)
+    public static Paginate<TDocument> ToPaginate<TDocument>(this IFindFluent<TDocument, TDocument> fluent, int index, int size)
     {
         if (size <= 0)
             size = 0;

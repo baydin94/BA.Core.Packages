@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq.Dynamic.Core;
 using System.Text;
 
-namespace Core.Persistence.Dynamic;
+namespace Core.Persistence.Sql.Dynamic;
 
 public static class IQueryableDynamicFilterExtensions
 {

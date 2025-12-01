@@ -1,0 +1,9 @@
+<Project>
+  <ItemGroup>
+    <!-- Solution-wide NuGet versions -->
+    <PackageVersion Include="Core.Application" Version="1.0.5" />
+    <PackageVersion Include="Core.Persistence" Version="1.0.5" />
+    <PackageVersion Include="Core.Security" Version="1.0.5" />
+    <PackageVersion Include="Core.CrossCuttingConcerns" Version="1.0.5" />
+  </ItemGroup>
+</Project>

@@ -1,15 +1,14 @@
-﻿using Core.Persistence.Dynamic;
-using Core.Persistence.Paging;
+﻿using Core.Abstractions.Domain;
+using Core.Persistence.Sql.Dynamic;
+using Core.Persistence.Sql.Paging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Collections;
 using System.Linq.Expressions;
-using System.Reflection;
 
-namespace Core.Persistence.Repositories;
+namespace Core.Persistence.Sql.Repositories;
 
 public class EfRepositoryBase<TEntity, TEntityId, TContext> : IRepositoryAsync<TEntity, TEntityId>, IRepository<TEntity, TEntityId>
     where TEntity : BaseEntity<TEntityId>
@@ -170,7 +169,7 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext> : IRepositoryAsync<T
         Context.Update(entity);
     }
 
-    private async Task SoftDeleteRecursiveAsync(IEntityTimestamps entity, HashSet<object> visited)
+    private async Task SoftDeleteRecursiveAsync(IHasTimestamps entity, HashSet<object> visited)
     {
         if (entity.DeletedDate.HasValue)
             return;
@@ -201,7 +200,7 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext> : IRepositoryAsync<T
                     continue;
                 foreach (object child in value)
                 {
-                    if (child is IEntityTimestamps childEntity)
+                    if (child is IHasTimestamps childEntity)
                         await SoftDeleteRecursiveAsync(childEntity, visited);
                 }
             }
@@ -211,7 +210,7 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext> : IRepositoryAsync<T
                 if (!referenceEntry.IsLoaded)
                     await referenceEntry.LoadAsync();
                 object? value = referenceEntry.CurrentValue;
-                if (value is IEntityTimestamps entityVale)
+                if (value is IHasTimestamps entityVale)
                     await SoftDeleteRecursiveAsync(entityVale, visited);
             }
         }

@@ -1,9 +1,9 @@
-﻿using Core.Persistence.Repositories;
+﻿using Core.Persistence.Sql.Repositories;
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Core.Persistence.BaseEntityConfiguration;
+namespace Core.Persistence.Sql.BaseEntityConfiguration;
 
 public class BaseEntityConfiguration<TEntity, TEntityId> : IEntityTypeConfiguration<TEntity>
     where TEntity : BaseEntity<TEntityId>

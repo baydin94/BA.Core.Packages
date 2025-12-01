@@ -1,0 +1,183 @@
+﻿1) Domain Entity Interfaces
+	Ama sınıf değil, sadece interface
+	IEntity
+	IAggregateRoot
+	IHasKey<TKey>
+	IHasTimestamps
+	ISoftDeletable
+
+2)  Abstractions
+	├── Dependencies
+	│    ├── IUnitOfWork.cs   ✔
+	│    ├── ICacheService.cs
+	│    ├── IEventPublisher.cs
+	│    └── IFileStorage.cs
+	│    └── IBlobStorageService.cs
+	│    └── ITransactionContext.cs
+	│    └── IEmailSender.cs
+	│    └── INotificationService.cs
+	│
+	├── Caching
+	│
+	├── Messaging
+	│
+	├── Security
+
+
+3) Cross-cutting interface’leri
+	Logging Provider
+	Cache Provider
+	Message Bus Provider (RabbitMQ, Kafka, SQS)
+	Email Provider
+	File Storage Provider (Local, S3, Azure Blob)
+	Image Resizer Provider
+	Notification Provider (SMS, Push)
+
+4) Security Abstractions
+	IJwtTokenGenerator
+	IPasswordHasher
+	IUserContext (JWT’den kullanıcı bilgilerini almak için)
+	IPermissionChecker
+
+5) CQRS / MediatR marker interface’leri
+
+6) Validation Soyutlamaları
+
+8) Event Sözleşmeleri (Domain Events / Integration Events)
+	public interface IIntegrationEvent { }
+	public interface IDomainEvent { }	
+
+9) Clock abstraction (çok önemli)
+	Deterministic testing için:
+	public interface IDateTimeProvider
+	{
+		DateTime UtcNow { get; }
+	}
+
+10) Configuration Abstractions
+	Application hiçbir zaman appsettings’i bilmez.
+	Bu nedenle abstraction yapılır:
+	public interface IAppSettings
+	{
+		JwtSettings Jwt { get; }
+		CacheSettings Cache { get; }
+	}
+
+
+
+
+Core.Abstractions
+│
+├── Domain
+│   ├── IEntity.cs
+│   ├── IAggregateRoot.cs
+│   ├── IHasKey.cs
+│   ├── IHasTimestamps.cs
+│   ├── ISoftDelete.cs
+│
+├── Persistence
+│   ├── IUnitOfWork.cs
+│   ├── IRepository.cs
+│   ├── IQuery.cs
+│   ├── ITransactionalRequest.cs
+│   ├── ITransactionProvider.cs
+│
+├── Messaging
+│   ├── IIntegrationEvent.cs
+│   ├── IMessagePublisher.cs
+│
+├── Security
+│   ├── IUserContext.cs
+│   ├── IJwtTokenGenerator.cs
+│
+├── Caching
+│   ├── ICacheService.cs
+│
+├── Time
+│   ├── IDateTimeProvider.cs
+│
+└── Common
+    ├── IPaginatedRequest.cs
+    ├── IPaginatedResponse.cs
+
+
+Core.Abstractions  <-- herkes buna bağımlı
+      ↑
+      ├── Core.Application → Core.CrossCuttingConcerns
+      ├── Core.Persistence
+      ├── Core.Persistence.Mongo
+      └── Core.CrossCuttingConcerns 
+
+WebAPI (hepsine bağımlı)
+
+Core.Application → Core.CrossCuttingConcerns
+Core.CrossCuttingConcerns → Core.Abstractions
+
+
+
+*** Time Klasörü içindeki IDateTimeProvider kullanım senaryoları:
+	1. Application Layer (En yaygın)
+
+		public class CreateOrderCommandHandler 
+			: IRequestHandler<CreateOrderCommand, Guid>
+		{
+			private readonly IDateTimeProvider _dateTime;
+			private readonly IOrderRepository _orderRepository;
+
+			public CreateOrderCommandHandler(
+				IDateTimeProvider dateTime,
+				IOrderRepository orderRepository)
+			{
+				_dateTime = dateTime;
+				_orderRepository = orderRepository;
+			}
+
+			public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+			{
+				var order = new Order
+				{
+					Id = Guid.NewGuid(),
+					CreatedAt = _dateTime.UtcNow,   // <<< doğru kullanım
+					Status = OrderStatus.Pending
+				};
+
+				await _orderRepository.CreateAsync(order);
+				return order.Id;
+			}
+		}
+
+	2. Kullanım Yeri — Domain layer (Entity veya Aggregate içinde)
+		public class Payment : IEntity
+		{
+			public Guid Id { get; set; }
+			public DateTime PaidAt { get; private set; }
+
+			public void MarkPaid(IDateTimeProvider clock)
+			{
+				PaidAt = clock.UtcNow;
+			}
+		}
+
+	3. Kullanım Yeri - Audit Fields (CreatedAt, UpdatedAt)
+		public abstract class AuditableEntity<TId> : IEntity<TId>
+		{
+			public DateTime CreatedAt { get; protected set; }
+			public DateTime UpdatedAt { get; protected set; }
+
+			public void SetCreated(IDateTimeProvider clock)
+				=> CreatedAt = clock.UtcNow;
+
+			public void SetUpdated(IDateTimeProvider clock)
+				=> UpdatedAt = clock.UtcNow;
+		}
+
+	4. Kullanım Yeri — Testlerde zaman freeze etme (çok önemli)
+		var fakeClock = new FakeDateTimeProvider(new DateTime(2025, 1, 1));
+		_service = new OrderService(fakeClock);
+
+	5. Infrastructure tarafı — gerçek implementasyon
+		public class SystemDateTimeProvider : IDateTimeProvider
+		{
+			public DateTime UtcNow => DateTime.UtcNow;
+		}
+		services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
