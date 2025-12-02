@@ -1,5 +1,4 @@
-﻿using Core.Persistence.Mongo.Repositories;
-
+﻿using Infrastructure.Persistence.Mongo.Repositories;
 namespace Core.Tests.Persistence.Mongo.TestDocuments;
 
 public class TestDocument : BaseDocument

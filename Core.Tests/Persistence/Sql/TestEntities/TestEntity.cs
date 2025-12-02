@@ -1,4 +1,4 @@
-﻿using Core.Persistence.Sql.Repositories;
+﻿using Infrastructure.Persistence.Sql.Repositories;
 
 namespace Core.Tests.Persistence.Sql.TestEntities;
 

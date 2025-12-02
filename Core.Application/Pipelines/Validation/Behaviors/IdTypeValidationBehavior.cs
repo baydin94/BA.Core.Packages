@@ -1,5 +1,5 @@
-﻿using Core.Application.Pipelines.Validation.Attributes;
-using Core.Application.Pipelines.Validation.Validators;
+﻿using Core.Abstractions.Applications.Validators;
+using Core.Application.Pipelines.Validation.Attributes;
 using Core.CrossCuttingConcerns.Exceptions.Types;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;

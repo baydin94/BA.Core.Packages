@@ -4,9 +4,10 @@
   </Folder>
   <Project Path="Core.Abstractions/Core.Abstractions.csproj" Id="0d7cbe20-0e1c-4589-820a-d2d6b120046a" />
   <Project Path="Core.Application/Core.Application.csproj" />
-  <Project Path="Core.Persistence.Sql/Core.Persistence.Sql.csproj" />
+  <Project Path="Core.CrossCuttingConcerns/Core.CrossCuttingConcerns.csproj" />
   <Project Path="Core.Tests/Core.Tests.csproj" Id="73f5585a-8f95-48c8-ac82-41293f7028a1" />
-  <Project Path="D:/Projects/backend/Core.Packages/Core.CrossCuttingConcerns/Core.CrossCuttingConcerns.csproj" />
-  <Project Path="D:/Projects/backend/Core.Packages/Core.Persistence.Mongo/Core.Persistence.Mongo.csproj" Id="3183f939-ccf5-48f5-8f8c-11061c91dae8" />
   <Project Path="D:/Projects/backend/Core.Packages/Core.Security/Core.Security.csproj" />
+  <Project Path="Infrastructure.Persistence.Mongo/Infrastructure.Persistence.Mongo.csproj" />
+  <Project Path="Infrastructure.Persistence.Redis/Infrastructure.Persistence.Redis.csproj" Id="9d414a2f-78ca-48e9-9580-b4b75e00757a" />
+  <Project Path="Infrastructure.Persistence.Sql/Infrastructure.Persistence.Sql.csproj" />
 </Solution>

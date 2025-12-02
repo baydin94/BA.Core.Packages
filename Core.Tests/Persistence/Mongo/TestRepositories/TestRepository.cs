@@ -1,6 +1,7 @@
-﻿using Core.Persistence.Mongo.Context;
-using Core.Persistence.Mongo.Repositories;
+﻿
 using Core.Tests.Persistence.Mongo.TestDocuments;
+using Infrastructure.Persistence.Mongo.Context;
+using Infrastructure.Persistence.Mongo.Repositories;
 
 namespace Core.Tests.Persistence.Mongo.TestRepositories;
 

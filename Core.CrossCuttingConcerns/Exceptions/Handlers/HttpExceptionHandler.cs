@@ -56,4 +56,11 @@ public class HttpExceptionHandler : ExceptionHandler
         string details = new IdTypeValidationProblemDetails(idTypeValidationException.Message, _configs).AsJson();
         return Response.WriteAsync(details);
     }
+
+    protected override Task HandleException(ConflictException conflictException)
+    {
+        Response.StatusCode = StatusCodes.Status409Conflict;
+        string detail = new ConflictProblemDetails(conflictException.Message, _configs).AsJson();
+        return Response.WriteAsync(detail);
+    }
 }

@@ -1,11 +1,12 @@
-﻿using Core.Persistence.Mongo.Context;
-using Core.Persistence.Mongo.Dynamic;
-using Core.Persistence.Mongo.Paging;
-using Core.Persistence.Mongo.Repositories;
+﻿
 using Core.Tests.Persistence.Mongo.Fixtures;
 using Core.Tests.Persistence.Mongo.TestDocuments;
 using Core.Tests.Persistence.Mongo.TestRepositories;
 using FluentAssertions;
+using Infrastructure.Persistence.Mongo.Context;
+using Infrastructure.Persistence.Mongo.Dynamic;
+using Infrastructure.Persistence.Mongo.Paging;
+using Infrastructure.Persistence.Mongo.Repositories;
 using Microsoft.Extensions.Options;
 using Xunit;
 

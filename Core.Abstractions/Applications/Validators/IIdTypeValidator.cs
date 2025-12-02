@@ -1,4 +1,4 @@
-﻿namespace Core.Application.Pipelines.Validation.Validators;
+﻿namespace Core.Abstractions.Applications.Validators;
 
 public interface IIdTypeValidator
 {
