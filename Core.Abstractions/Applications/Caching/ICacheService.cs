@@ -2,6 +2,10 @@
 
 public interface ICacheService
 {
+    Task<CacheReadResult<T>> GetAsync<T>(CacheAddress address, CancellationToken cancellationToken = default);
+    Task SetAsync<T>(CacheAddress address, T value, TimeSpan ttl, CancellationToken cancellationToken = default);
+    Task RemoveAsync(CacheAddress address, CancellationToken cancellationToken = default);
+
     Task<CacheReadResult<T>> GetAsync<T>(string tenantId, string group, string key, CancellationToken cancellationToken = default);
     Task<T?> GetTAsync<T>(string key, CancellationToken cancellationToken = default);
     Task SetAsync<T>(string key, T value, TimeSpan ttl, CancellationToken cancellationToken = default);

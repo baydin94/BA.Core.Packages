@@ -2,7 +2,11 @@
 
 public interface ICacheableRequest
 {
-    string CacheKey { get; }
-    bool BypassCache { get; } //Developer
-    TimeSpan? SlidingExpiration { get; }
+    CacheAddress? CacheAddress => null;
+    TimeSpan? AbsoluteExpiration => null;
+    bool BypassCache => false;
+
+    // Retained for existing request implementations. Scoped caching requires CacheAddress.
+    string CacheKey => CacheAddress?.Key ?? string.Empty;
+    TimeSpan? SlidingExpiration => null;
 }

@@ -1,50 +1,57 @@
-﻿//using Core.Abstractions.Applications.Caching;
-//using MediatR;
-//using Microsoft.Extensions.Caching.Distributed;
-//using Microsoft.Extensions.Options;
-//using System.Text;
-//using System.Text.Json;
+﻿using Core.Abstractions.Applications.Caching;
+using Core.Abstractions.Applications.Transaction;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
-//namespace Core.Application.Pipelines.Caching;
+namespace Core.Application.Pipelines.Caching;
 
-//public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-//    where TRequest : IRequest<TResponse>, ICacheableRequest
-//{
-//    private readonly CacheSettings _cacheSettings;
-//    private readonly IDistributedCache _distributedCache;
+/// <summary>Serves opted-in, tenant-scoped queries from cache with a fixed lifetime.</summary>
+public sealed class CachingBehavior<TRequest, TResponse>(
+    ICacheService cache, IOptions<CacheSettings> options,
+    ILogger<CachingBehavior<TRequest, TResponse>> logger)
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
+{
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (request is ITransactionRequest || System.Transactions.Transaction.Current is not null ||
+            request is not ICacheableRequest { BypassCache: false, CacheAddress: { } address } query)
+            return await next(cancellationToken);
 
-//    public CachingBehavior(IDistributedCache distributedCache, IOptions<CacheSettings> options)
-//    {
-//        _distributedCache = distributedCache;
-//        _cacheSettings = options.Value ?? throw new InvalidOperationException();
-//    }
+        var ttl = query.AbsoluteExpiration ?? options.Value.AbsoluteExpiration;
+        if (ttl < TimeSpan.FromMilliseconds(1))
+            throw new ArgumentOutOfRangeException(nameof(ttl), "Cache lifetime must be at least one millisecond.");
 
-//    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-//    {
-//        if (request.BypassCache)
-//            return await next();
+        CacheReadResult<TResponse> read;
+        try
+        {
+            read = await cache.GetAsync<TResponse>(address, cancellationToken);
+        }
+        catch (CacheUnavailableException)
+        {
+            logger.LogWarning("Cache read unavailable for {RequestType}.", typeof(TRequest).Name);
+            return await next(cancellationToken);
+        }
 
-//        byte[]? cachedResponse = await _distributedCache.GetAsync(request.CacheKey, cancellationToken);
-//        TResponse? response;
-//        if (cachedResponse is not null)
-//        {
-//             response = JsonSerializer.Deserialize<TResponse>(Encoding.UTF8.GetString(cachedResponse));
-//            //log
-//        }
-//        else
-//        {
-//            response = await getResponseAndAddToCache(request, next, cancellationToken);
-//        }
-//    }
+        if (read.IsHit)
+            return read.Value!;
 
-//    private async Task<TResponse?> getResponseAndAddToCache(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-//    {
-//        TResponse? response = await next();
+        var response = await next(cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        try
+        {
+            if (read.Version is { } version && cache is IConditionalCacheWriter writer)
+                await writer.SetIfCurrentAsync(address, response, ttl, version, cancellationToken);
+            else
+                await cache.SetAsync(address, response, ttl, cancellationToken);
+        }
+        catch (CacheUnavailableException)
+        {
+            logger.LogWarning("Cache write unavailable for {RequestType}.", typeof(TRequest).Name);
+        }
 
-//        TimeSpan slidingExpiration = request.SlidingExpiration ?? TimeSpan.FromDays(_cacheSettings.SlidingExpiration);
-//        DistributedCacheEntryOptions cacheEntryOptions = new()
-//        {
-//            SlidingExpiration = slidingExpiration
-//        };
-//    }
-//}
+        return response;
+    }
+}

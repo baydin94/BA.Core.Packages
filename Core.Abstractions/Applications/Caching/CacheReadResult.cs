@@ -21,6 +21,8 @@ public class CacheReadResult<T>
     /// </summary>
     public T? Value { get; }
 
+    public string? Version { get; private init; }
+
     public CacheReadResult(bool isHit, T? value)
     {
         IsHit = isHit;
@@ -37,6 +39,8 @@ public class CacheReadResult<T>
     /// <summary>
     /// Represents a cache entry that could not be found.
     /// </summary>
-    public static CacheReadResult<T> Miss => default!;
+    public static CacheReadResult<T> Miss => new(false, default);
+
+    public static CacheReadResult<T> MissAt(string version) => new(false, default) { Version = version };
 
 }

@@ -9,8 +9,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Messaging\" />
-		<Folder Include="Security\" />
+	  <Compile Remove="Messaging\**" />
+	  <Compile Remove="Security\**" />
+	  <EmbeddedResource Remove="Messaging\**" />
+	  <EmbeddedResource Remove="Security\**" />
+	  <None Remove="Messaging\**" />
+	  <None Remove="Security\**" />
 	</ItemGroup>
 
 </Project>
