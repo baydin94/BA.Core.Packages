@@ -9,7 +9,7 @@
 2)  Abstractions
 	├── Dependencies
 	│    ├── IUnitOfWork.cs   ✔
-	│    ├── ICacheService.cs
+	│    ├── ICacheService.cs ✔
 	│    ├── IEventPublisher.cs
 	│    └── IFileStorage.cs
 	│    └── IBlobStorageService.cs
@@ -18,10 +18,33 @@
 	│    └── INotificationService.cs
 	│
 	├── Caching
+	    ├── ICacheService.cs
+        ├── ICacheableRequest.cs
+        ├── CacheEntryPolicy.cs
+        └── CacheReadResult.cs
 	│
 	├── Messaging
 	│
 	├── Security
+
+	Core.CrossCuttingConcerns
+    └── Caching
+        └── Configuration
+			└── CacheSettings.cs
+
+	Core.Application
+	└── Pipelines
+		└── Caching
+			└── CachingBehavior.cs
+
+	Infrastructure.Persistence.Redis
+	├── Adapters
+	│   └── RedisCacheAdapter.cs
+	├── Configuration
+	├── Connection
+	├── Extensions
+	├── Services
+	└── Utilities
 
 
 3) Cross-cutting interface’leri
